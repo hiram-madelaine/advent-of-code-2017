@@ -30,14 +30,21 @@
 166 136 80 185 135 78 177 123 82 150 121 145 115 63 68 24
 214 221 265 766 959 1038 226 1188 1122 117 458 1105 1285 1017 274 281")
 
+(def x-grid (comp
+              (map #(string/split % #"\s+"))
+              (map #(map (fn [s] (Integer/parseInt s)) %))))
+
 (def x-day-2
-  (comp (map #(string/split % #"\s+"))
-        (map #(map (fn [s] (Integer/parseInt s)) %))
-        (map (juxt #(apply max %) #(apply min %)))
-        (map #(apply - %))))
+  (comp x-grid
+        (map (juxt #(reduce max %) #(reduce min %)))
+        (map #(reduce - %))))
 
 (defn checksum
   [spreadsheet]
   (->> spreadsheet
        (string/split-lines)
        (transduce x-day-2 +)))
+
+
+
+
