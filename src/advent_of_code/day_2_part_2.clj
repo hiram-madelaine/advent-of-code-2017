@@ -24,12 +24,11 @@
                               (map #(apply / %))
                               (filter int?)))
 (defn evenly-dividers
+  "Find the only two numbers in a row where one evenly divides the other."
   [ns]
   (->> (combo/combinations ns 2)
        (into [] x-find-evenly-dividers)
        first))
-
-(evenly-dividers '(3751 3769 2769 2039 2794 240 3579 1228 4291 220 324 3960 211 1346 237 1586))
 
 (def x-day-2-part-2 (comp day-2/x-grid
                           (map evenly-dividers)))
