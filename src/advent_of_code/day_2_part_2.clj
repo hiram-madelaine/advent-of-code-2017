@@ -15,23 +15,39 @@
    In this example, the sum of the results would be 4 + 3 + 2 = 9"
   (:require [advent-of-code.day-2 :as day-2]
             [clojure.string :as string]
-            [clojure.math.combinatorics :as combo]))
+            #_[clojure.math.combinatorics :as combo]))
 
 
-(def x-find-evenly-dividers (comp
+#_(def x-find-evenly-dividers (comp
                               (map sort)
                               (map reverse)
                               (map #(apply / %))
                               (filter int?)))
-(defn evenly-dividers
-  "Find the only two numbers in a row where one evenly divides the other."
+
+
+#_(defn evenly-dividers
+  "Find the division of the only two numbers in a row where one evenly divides the other."
   [ns]
   (->> (combo/combinations ns 2)
        (into [] x-find-evenly-dividers)
        first))
 
+(defn evenly-dividers'
+  "Find the division of the only two numbers in a row where one evenly divides the other.
+  We assume there is no zero."
+  [ns]
+  (when (seq ns)
+    (let [[f & r] ns]
+      (if-let [result (some #(let [[lhs rhs] (sort [f %])
+                                   divided (/ rhs lhs)]
+                               (when (int? divided) divided))
+                            r)]
+        result
+        (evenly-dividers' r)))))
+
+
 (def x-day-2-part-2 (comp day-2/x-grid
-                          (map evenly-dividers)))
+                          (map evenly-dividers')))
 
 (defn checksum
   [spreasheet]
