@@ -59,17 +59,16 @@
 (defn grid
   "Generate the correspondance between numbers and cartesian coordinates."
   [n]
-  (let [spi (spirale n)]
-    (reduce
-      (fn [acc [n move]]
-        (let [[x y] (get acc (dec n))
-              [x' y'] (move moves)]
-          (assoc acc n [(+ x x') (+ y y')])))
-      {1 [0 0]}
-      (drop 1 (map
-                vector
-                (flatten (spirale n))
-                (mapcat rank-moves odds))))))
+  (reduce
+    (fn [acc [n move]]
+      (let [[x y] (get acc (dec n))
+            [x' y'] (move moves)]
+        (assoc acc n [(+ x x') (+ y y')])))
+    {1 [0 0]}
+    (drop 1 (map
+              vector
+              (flatten (spirale n))
+              (mapcat rank-moves odds)))))
 
 (defn carried
   "Give the Manhattan distance of any number from the center."
