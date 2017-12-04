@@ -29,6 +29,13 @@
    How many steps are required to carry the data from the square identified in your puzzle input all the way to the access port?"
   (:require [clojure.spec.alpha :as s]))
 
+; Because the Manhattan distance is easy to compute in cartesian coordinates,
+; my first Idea was to map the spirale coordinate to cartesian coordinates.
+; Starting with 1 at the central coordinates [0 0]
+; I follow the trail of the spirale :right :up :left :left :down ...
+; At each step the new coordinate is computed from the last.
+
+
 (def odds (iterate #(+ 2 %) 1))
 
 (defn spirale
