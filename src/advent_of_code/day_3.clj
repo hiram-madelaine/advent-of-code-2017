@@ -29,10 +29,6 @@
    How many steps are required to carry the data from the square identified in your puzzle input all the way to the access port?"
   (:require [clojure.spec.alpha :as s]))
 
-
-
-
-
 (def odds (iterate #(+ 2 %) 1))
 
 (defn spirale
@@ -52,6 +48,7 @@
             :down  [0 -1]})
 
 (defn rank-moves
+  "Generate the path of the outer spiral of rank n"
   [n]
   (-> [:right]
       (concat (take (dec (dec n)) (repeat :up)))
@@ -59,9 +56,9 @@
       (concat (take (dec n) (repeat :down)))
       (concat (take (dec n) (repeat :right)))))
 
-(map rank-moves (take 4 odds))
-
-(defn grid [n]
+(defn grid
+  "Generate the correspondance between numbers and cartesian coordinates."
+  [n]
   (let [spi (spirale n)]
     (reduce
       (fn [acc [n move]]
@@ -70,17 +67,14 @@
           (assoc acc n [(+ x x') (+ y y')])))
       {1 [0 0]}
       (drop 1 (map
-                (fn [n move]
-                  [n move])
-                (flatten (mapcat (fn [data]
-                                   [data]) spi))
-                (mapcat rank-moves (take (count spi) odds)))))))
+                vector
+                (flatten (spirale n))
+                (mapcat rank-moves odds))))))
 
 (defn carried
+  "Give the Manhattan distance of any number from the center."
   [n]
   (let [spi->cartesian (grid n)
         [x' y'] (get spi->cartesian n)]
     (+ (Math/abs x')
        (Math/abs y'))))
-
-(carried 368078)
