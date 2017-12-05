@@ -53,17 +53,23 @@
 
 (s/def ::state (s/keys :req [::list-of-jumps
                              ::position]))
+
+
 (defn jump
   "Take the number of jumps at the current position
    Jump to the new position
    Increment the initial number of jumps."
-  [state]
+  [incrementer state]
   (let [{::keys [list-of-jumps position]} state
         jumps (get list-of-jumps position)
         new-position (+ position jumps)]
     (-> state
-        (update-in [::list-of-jumps position] inc)
+        (update-in [::list-of-jumps position] incrementer)
         (assoc ::position new-position))))
+
+(def jump-part-1
+  (partial jump inc))
+
 
 (defn exit?
   [state]
@@ -95,11 +101,13 @@
    * The current position
 
    Action : we need a jump function from state -> state"
-  [state]
+  [jump state]
   (->> state
        (iterate jump)
        (take-while (complement exit?))
        (count)))
+
+(def solution-part-1 (partial solution jump-part-1))
 
 (def input {::position      0
             ::list-of-jumps [0
