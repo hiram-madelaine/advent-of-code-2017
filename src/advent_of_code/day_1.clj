@@ -18,13 +18,3 @@
        (partition 2 1)
        (transduce x-day-1 +)))
 
-(defn inverse-captcha'
-  [digits]
-  (->> (str digits (first digits))
-       (partition 2 1)
-       (reduce (fn [acc [f s]]
-                 (if (= f s)
-                   (let [value (Integer/parseInt (str f))]
-                     (+ acc value))
-                   acc))
-               0)))
