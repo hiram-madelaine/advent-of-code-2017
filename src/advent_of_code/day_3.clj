@@ -71,7 +71,7 @@
       (let [[x y] (get acc (dec n))
             [x' y'] (move moves)]
         (assoc acc n [(+ x x') (+ y y')])))
-    {1 [0 0]}
+    (sorted-map 1 [0 0])
     (drop 1 (map
               vector
               (flatten (spirale n))
