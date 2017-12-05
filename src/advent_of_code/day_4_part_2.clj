@@ -23,6 +23,3 @@
                      set)]
     (= (count tokens)
        (count letters))))
-
-
-(count (day-4/check check-day-4-part-2 day-4/input))

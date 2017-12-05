@@ -12,3 +12,7 @@
     true "a ab abc abd abf abj"
     true "iiii oiii ooii oooi oooo"
     false "oiii ioii iioi iiio"))
+
+
+(deftest answer-day-4-part-2
+  (is (= 186 (count (day-4/check check-day-4-part-2 day-4/input)))))
