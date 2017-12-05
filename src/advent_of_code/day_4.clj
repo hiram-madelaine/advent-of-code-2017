@@ -19,7 +19,6 @@
   (= (count tokens)
      (count (set tokens))))
 
-
 (defn check-passphrase
   [check-fn pass]
   (let [tokens (string/split pass #"\s")]
@@ -38,7 +37,6 @@
         :args (s/cat :candidate string?)
         :ret (s/nilable boolean?))
 
-(s/exercise-fn `check-passphrase)
+(comment
+  (s/exercise-fn `check-passphrase))
 
-
-(check-passphrase day-4-check  "aa bb cc dd ee")
