@@ -6,16 +6,16 @@
 (deftest test-not-exited?
   (are [expected state]
     (= expected (day-5/not-exited? state))
-    true {:advent-of-code.day-5/list-of-jumps [0 3 0 1 -3]
-          :advent-of-code.day-5/position      0}
-    false {:advent-of-code.day-5/list-of-jumps [0 3 0 1 -3]
-           :advent-of-code.day-5/position      -1}
-    false {:advent-of-code.day-5/list-of-jumps [0 3 0 1 -3]
-           :advent-of-code.day-5/position      5}))
+    true {::day-5/jumps                  [0 3 0 1 -3]
+          :advent-of-code.day-5/position 0}
+    false {::day-5/jumps                  [0 3 0 1 -3]
+           :advent-of-code.day-5/position -1}
+    false {::day-5/jumps                  [0 3 0 1 -3]
+           :advent-of-code.day-5/position 5}))
 
 (deftest test-example
-  (is (= 5 (day-5/solution-part-1 {:advent-of-code.day-5/list-of-jumps [0 3 0 1 -3]
-                                   :advent-of-code.day-5/position      0}))))
+  (is (= 5 (day-5/solution-part-1 {::day-5/jumps                  [0 3 0 1 -3]
+                                   :advent-of-code.day-5/position 0}))))
 
 (deftest test-solution
     (is (= 372139 (day-5/solution-part-1 day-5/input))))

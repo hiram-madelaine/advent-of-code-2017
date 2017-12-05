@@ -48,10 +48,10 @@
             [clojure.spec.test.alpha :as stest]))
 
 (s/def ::jump int?)
-(s/def ::list-of-jumps (s/coll-of ::jump))
+(s/def ::jumps (s/coll-of ::jump))
 (s/def ::position nat-int?)
 
-(s/def ::state (s/keys :req [::list-of-jumps
+(s/def ::state (s/keys :req [::jumps
                              ::position]))
 
 
@@ -60,11 +60,11 @@
    Jump to the new position
    Increment the jumps at initial position."
   [incrementer state]
-  (let [{::keys [list-of-jumps position]} state
-        jumps (list-of-jumps position)
+  (let [{::keys [jumps position]} state
+        jumps (jumps position)
         new-position (+ position jumps)]
     (-> state
-        (update-in [::list-of-jumps position] incrementer)
+        (update-in [::jumps position] incrementer)
         (assoc ::position new-position))))
 
 (def jump-part-1 (partial jump inc))
@@ -72,14 +72,14 @@
 
 (defn not-exited?
   [state]
-  (let [{::keys [list-of-jumps position]} state
-        positions (count list-of-jumps)]
+  (let [{::keys [jumps position]} state
+        positions (count jumps)]
     (<= 0 position (dec positions))))
 
 (defn invariant
   [state state']
   (->> [state' state]
-       (map ::list-of-jumps)
+       (map ::jumps)
        (map #(apply + %))
        (apply -)
        (= 1)))
@@ -113,8 +113,8 @@
   (stest/abbrev-result (first (stest/check `jump-part-1))))
 
 
-(def input {::position      0
-            ::list-of-jumps [0
+(def input {::position 0
+            ::jumps    [0
                              1
                              0
                              0
