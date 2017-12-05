@@ -94,7 +94,10 @@
   "State : we need to track :
    * the List of Jumps Offset
    * The current position
-   Action : we need a jump function from state -> state"
+
+   Action : we need a jump function from state -> state'
+
+   Run : Jump until we exit the list."
   [jump state]
   (->> state
        (iterate jump)
@@ -107,28 +110,7 @@
 (comment
 
   (s/exercise-fn `jump)
-  (stest/abbrev-result (first (stest/check `jump-part-1)))
-
-  (solution-part-1 #:advent-of-code.day-5 {:list-of-jumps [-1
-                                                   0
-                                                   0
-                                                   -1
-                                                   0
-                                                   -1
-                                                   0
-                                                   -1
-                                                   0
-                                                   0
-                                                   -1
-                                                   -1
-                                                   -1
-                                                   0
-                                                   -1
-                                                   -1
-                                                   -1],
-                                   :position 0})
-  )
-
+  (stest/abbrev-result (first (stest/check `jump-part-1))))
 
 
 (def input {::position      0
