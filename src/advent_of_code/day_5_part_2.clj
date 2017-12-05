@@ -14,4 +14,5 @@
 
 (def solution-part-2 (partial day-5/solution jump-part-2))
 
-(solution-part-2 day-5/input)
+(comment
+  (solution-part-2 day-5/input))

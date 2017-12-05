@@ -58,56 +58,78 @@
 (defn jump
   "Take the number of jumps at the current position
    Jump to the new position
-   Increment the initial number of jumps."
+   Increment the jumps at initial position."
   [incrementer state]
   (let [{::keys [list-of-jumps position]} state
-        jumps (get list-of-jumps position)
+        jumps (list-of-jumps position)
         new-position (+ position jumps)]
     (-> state
         (update-in [::list-of-jumps position] incrementer)
         (assoc ::position new-position))))
 
-(def jump-part-1
-  (partial jump inc))
+(def jump-part-1 (partial jump inc))
 
 
-(defn exit?
+(defn not-exited?
   [state]
   (let [{::keys [list-of-jumps position]} state
         positions (count list-of-jumps)]
-    (or (neg? position)
-        (> position (dec positions)))))
+    (<= 0 position (dec positions))))
 
-(s/fdef jump
+(defn invariant
+  [state state']
+  (->> [state' state]
+       (map ::list-of-jumps)
+       (map #(apply + %))
+       (apply -)
+       (= 1)))
+
+(s/fdef jump-part-1
         :args (s/cat :state ::state)
         :ret ::state
         :fn (fn [{{state :state} :args state' :ret}]
-              (->> [state state']
-                   (map ::list-of-jumps)
-                   (map #(apply + %))
-                   (apply -)
-                   (= 1))))
+              (invariant state state')))
+
+(defn solution
+  "State : we need to track :
+   * the List of Jumps Offset
+   * The current position
+   Action : we need a jump function from state -> state"
+  [jump state]
+  (->> state
+       (iterate jump)
+       (take-while not-exited?)
+       (count)))
+
+(def solution-part-1 (partial solution jump-part-1))
 
 
 (comment
 
   (s/exercise-fn `jump)
-  (stest/abbrev-result (first (stest/check `jump))))
+  (stest/abbrev-result (first (stest/check `jump-part-1)))
+
+  (solution-part-1 #:advent-of-code.day-5 {:list-of-jumps [-1
+                                                   0
+                                                   0
+                                                   -1
+                                                   0
+                                                   -1
+                                                   0
+                                                   -1
+                                                   0
+                                                   0
+                                                   -1
+                                                   -1
+                                                   -1
+                                                   0
+                                                   -1
+                                                   -1
+                                                   -1],
+                                   :position 0})
+  )
 
 
-(defn solution
-  "Model : we need to track :
-   * the List of Jumps Offset
-   * The current position
-
-   Action : we need a jump function from state -> state"
-  [jump state]
-  (->> state
-       (iterate jump)
-       (take-while (complement exit?))
-       (count)))
-
-(def solution-part-1 (partial solution jump-part-1))
 
 (def input {::position      0
             ::list-of-jumps [0
