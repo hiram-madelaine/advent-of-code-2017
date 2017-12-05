@@ -5,7 +5,7 @@
 (defn day-5 [s]
    (->> s
         (iterate (fn [[i js]] [(+ i (js i)) (update js i inc)]))
-        (take-while (fn [[p js]] (<= 0 p (dec (count js)))))
+        (take-while (fn [[p js]] (<= 0 p (-> js count dec))))
         count))
 
 (comment
