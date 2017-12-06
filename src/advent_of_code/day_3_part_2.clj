@@ -24,8 +24,6 @@
   (:require [advent-of-code.day-3 :as day-3]))
 
 
-(day-3/grid 7)
-
 (defn adjacent?
   [p p']
   (let [[x y] p
@@ -53,4 +51,8 @@
           (into [] (day-3/grid n))))
 
 
-(filter #(> % 368078) (sort (vals (square 50))))
+(comment
+  (square 1)
+  (square 12)
+
+  (filter #(> % 368078) (sort (vals (square 50)))))

@@ -38,6 +38,9 @@
 
 (def odds (iterate #(+ 2 %) 1))
 
+(comment
+  (take 10 (conj (map (fn [[l h]]
+                        [(inc l) h]) (partition 2 1 (map #(* % %) odds))) [1 1])))
 (defn spirale
   [n]
   (->> (conj (map (fn [[l h]]
@@ -57,11 +60,28 @@
 (defn rank-moves
   "Generate the path of the outer spiral of rank n"
   [n]
-  (-> [:right]
-      (concat (take (dec (dec n)) (repeat :up)))
-      (concat (take (dec n) (repeat :left)))
-      (concat (take (dec n) (repeat :down)))
-      (concat (take (dec n) (repeat :right)))))
+  (let [r (dec n)]
+    (-> [:right]
+        (concat (repeat (dec r) :up))
+        (concat (repeat r :left))
+        (concat (repeat r :down))
+        (concat (repeat r :right)))))
+
+(defn rank-moves'
+  "Generate the path of the outer spiral of rank n"
+  [rank]
+  (let [[n steps] rank
+        r (dec n)]
+    [(inc n) (-> [[1 0]]
+                 (concat (repeat (dec r) [0 1]))
+                 (concat (repeat r [-1 0]))
+                 (concat (repeat r [0 -1]))
+                 (concat (repeat r [1 0])))]))
+
+(comment
+
+  (map second (take 3 (iterate rank-moves' [1 [[0 0]]])))
+  )
 
 (defn grid
   "Generate the correspondance between numbers and cartesian coordinates."
