@@ -52,3 +52,6 @@
         children (reduce (fn [acc [_ _ cs]] (clojure.set/union acc cs)) #{} nodes)]
     (ffirst (filter (fn [[p _]] (not (children p))) nodes))))
 
+
+;Part 2
+

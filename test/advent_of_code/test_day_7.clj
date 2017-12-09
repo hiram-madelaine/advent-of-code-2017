@@ -1,7 +1,9 @@
 (ns advent-of-code.test-day-7
   (:require [clojure.test :refer :all]
             [advent-of-code.day-7 :as day-7]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [clojure.zip :as z]
+            [clojure.walk :refer [postwalk]]))
 
 (def example-str "pbga (66)\nxhth (57)\nebii (61)\nhavc (66)\nktlj (57)\nfwft (72) -> ktlj, cntj, xhth\nqoyq (66)\npadx (45) -> pbga, havc, qoyq\ntknk (41) -> ugml, padx, fwft\njptl (61)\nugml (68) -> gyxo, ebii, jptl\ngyxo (61)\ncntj (57)\n")
 
@@ -13,3 +15,118 @@
 
 (deftest test-day-7-part-1
   (is (= "svugo" (day-7/solution input-day-7))))
+
+
+(defn ->input
+  [_ node weight children]
+  {node {:weight   (Integer/parseInt weight)
+         :children (when-not (string/blank? children)
+                     (set (string/split children #", ")))}})
+
+
+(defn tree
+  [input]
+  (into {} (comp
+             (map #(re-matches day-7/line-reg %))
+             (map #(apply ->input %))) (string/split-lines input)))
+
+(def plus (fnil conj []))
+(plus nil 9)
+
+;https://github.com/apod/advent-of-code-2017/blob/master/src/advent_of_code_2017/day07.clj
+
+(defn weigth-branch
+  [db root]
+  (let [{:keys [weight children]} (db root)]
+    (if (seq children)
+      (reduce conj [weight] (map #(weigth-branch db %) children))
+      weight)))
+
+(defn total-weights
+  [input root]
+  (let [db (tree input)
+        children (:children (db root))]
+    (map #(weigth-branch db %) children)))
+
+(total-weights example-str "tknk")
+
+(map #(reduce + %) [[139 31 31] [129 36 36] [17 46 46 46 46]
+                    [31 85 85]])
+(map #(reduce + %) [[214 62 62 62 62] [74 97 97 97 97] [440 11 11]])
+
+(let [[root & sub-trees] (first (total-weights input-day-7 "svugo"))
+      poids (fn [tree]
+              (if (vector? tree)
+                (map #(reduce + %) tree)
+                tree))]
+  (map poids sub-trees))
+
+(postwalk (fn [form]
+            (if (vector? form)
+              (reduce + form)
+              form))
+          (total-weights input-day-7 "svugo"))
+
+
+
+(defn controle
+  [input root]
+  (let [db (tree input)]
+    (= (reduce + (map (fn [[k v]]
+                        (:weight v)) db))
+       (reduce + (:weight (db root)) (total-weights input root)))))
+
+(comment
+  (solution-day-7-part-2 example-str "tknk")
+  (controle input-day-7 "svugo")
+  (controle example-str "tknk")
+  (solution-day-7-part-2 input-day-7 "svugo")
+  ((tree input-day-7) "svugo")
+  )
+
+(defn parse-program [s]
+  (let [[node children] (string/split s #" -> ")
+        [_ name weight] (re-matches #"([a-z]+) \((\d+)\)" node)]
+    (cond-> {:name name
+             :weight (read-string weight)}
+            children (assoc :children (string/split children #", ")))))
+
+(defn root-program [programs]
+  (let [with-children (filter :children programs)
+        children (set (mapcat :children with-children))]
+    (some (fn [{:keys [name] :as program}]
+            (when (not (contains? children name))
+              program)) with-children)))
+
+(defn weakest-link [programs]
+  (let [root (root-program programs)
+        by-name (into {} (map (fn [program]
+                                [(:name program) program]) programs))]
+    (letfn [(calculate-weight [program-name]
+              (let [{:keys [children weight]} (get by-name program-name)]
+                (if children
+                  (reduce + weight (map calculate-weight children))
+                  weight)))
+            (expand-children [program-name]
+              (let [{:keys [children]} (get by-name program-name)]
+                (when children
+                  (into [program-name] (mapcat expand-children children)))))]
+      (some (fn [program-name]
+              (let [{:keys [name weight children] :as program} (get by-name program-name)]
+                (when children
+                  (when-let [weights (map calculate-weight children)]
+                    (when (apply not= weights)
+                      (let [unbalanced (some #(when (= (val %) 1) (key %)) (frequencies weights))
+                            unbalanced-program (get by-name (nth children (.indexOf weights unbalanced)))
+                            difference (reduce - (apply (juxt max min) weights) )]
+                        (assoc unbalanced-program
+                          :new-weight (- (:weight unbalanced-program) difference))))))))
+            ;; Expand children and get them in reverse order to find the inner most unbalance
+            (reverse (expand-children (:name root)))))))
+
+(let [input (string/split-lines input-day-7)
+      programs (map parse-program input)]
+  ;; First star
+  (:name (root-program programs))
+  ;; Second star
+  (:new-weight (weakest-link programs)))
