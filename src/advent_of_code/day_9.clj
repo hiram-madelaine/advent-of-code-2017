@@ -96,9 +96,20 @@
 
 (defn solution
   [input]
-  (->> input
-       stream-processing
-       (scoring 1)))
+  (scoring 1 (stream-processing input)))
 
 
+(def stream-garbage (insta/parser
+                      "<GROUP> ::= <OPEN-GROUP> (THING <COMMA>?)* <END-GROUP>
+                       <THING> ::= GROUP|GARBAGE\n<COMMA> ::= ','
+                       OPEN-GROUP ::= '{'
+                       END-GROUP ::= '}'
+                       <GARBAGE> ::= <START-GARBAGE> GARBAGE-CONTENT <END-GARBAGE>
+                       START-GARBAGE ::= '<'
+                       END-GARBAGE ::= '>'
+                       <GARBAGE-CONTENT> ::= (#\".\" | IGNORE)*
+                       <IGNORE> ::= <'!' #\".\">"))
 
+(defn solution-2
+  [input]
+  (count (stream-garbage input)))
