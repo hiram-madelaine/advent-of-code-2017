@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.9.0-RC2"]
                  ;[org.clojure/math.combinatorics "0.1.4"]
                  [org.clojure/test.check "0.10.0-alpha2"]
-                 [com.gfredericks/test.chuck "0.2.8"]])
+                 [com.gfredericks/test.chuck "0.2.8"]
+                 [instaparse "1.4.8"]])
