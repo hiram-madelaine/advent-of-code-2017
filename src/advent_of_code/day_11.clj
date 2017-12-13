@@ -1,4 +1,6 @@
 (ns advent-of-code.day-11
+  "I have solved this one using this precious source :
+   https://www.redblobgames.com/grids/hexagons/#distances"
   (:require [clojure.string :as string]))
 
 
