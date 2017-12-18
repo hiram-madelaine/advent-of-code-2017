@@ -1,5 +1,6 @@
 (ns advent-of-code.day-10
-  (:require [com.rpl.specter :refer [setval srange]]))
+  (:require [com.rpl.specter :refer [setval srange]]
+            [clojure.pprint :refer [cl-format]]))
 
 (defn replace-at
   "Replace in input at position by sub
@@ -18,9 +19,7 @@
             [start end] (split-at in sub)]
         (->> input
              (setval (srange position (+ position in)) start)
-             (setval (srange 0 (count end)) end))))
-
-    ))
+             (setval (srange 0 (count end)) end))))))
 
 
 (defn rotate
@@ -70,4 +69,5 @@
          clojure.string/join)))
 
 
-(count "a2582a3ae66e6e86e3812dcb672a272")
+
+
