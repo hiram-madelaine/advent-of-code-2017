@@ -13,19 +13,6 @@
                       (map-indexed (fn [j c]
                                      [[i j] c]) line))
                     (string/split-lines input)))))
-
-(defn right
-  [[x y]]
-  [y (- x)])
-
-(defn left
-  [[x y]]
-  [(- y) x])
-
-(def turn {\# right
-           \. left})
-
-
 (defn init
   [input]
   (let [carte (->model input)
@@ -39,17 +26,31 @@
   [[x y] [dx dy]]
   [(+ x dx) (+ y dy)])
 
+(defn right
+  [[x y]]
+  [y (- x)])
 
-(def infect {\#  \.
-             \.  \#
-             nil \#})
+(defn left
+  [[x y]]
+  [(- y) x])
+
+(defn reverse
+  [[x y]]
+  [(- x) (- y)])
+
+(def infect-1 {\#  {:next \.
+                    :move right}
+               \.  {:next \#
+                    :move left}
+               nil {:next \#
+                    :move left}})
 
 (defn step
-  [{:keys [heading current] :as state}]
+  [infect-fn {:keys [heading current] :as state}]
   (let [status (get-in state [:carte current])
-        move (get turn status left)
+        move (get-in infect-fn [status :move])
         heading' (move heading)
-        status' (infect status)
+        status' (get-in infect-fn [status :next] status)
         cnt (if (= \# status') 1 0)]
     (-> state
         (assoc-in [:carte current] status')
@@ -58,13 +59,43 @@
         (update :current add heading'))))
 
 (defn solution
-  [input]
-  (->> input
-       init
-       (iterate step)
-       (take 10000)
-       (last)
-       (:infections)))
+  ([infect-fn input runs]
+   (let [step-1 (partial step infect-fn)]
+     (->> input
+          init
+          (iterate step-1)
+          (take runs)
+          (last)
+          (:infections))))
+  ([infect-fn input]
+    (solution infect-fn input 10000)))
+
+(def solution-1 (partial solution infect-1))
+
+
+(def infect-2
+  "Clean nodes become weakened.
+   Weakened nodes become infected.
+   Infected nodes become flagged.
+   Flagged nodes become clean.
+
+  If it is clean, it turns left.
+  If it is weakened, it does not turn, and will continue moving in the same direction.
+  If it is infected, it turns right.
+  If it is flagged, it reverses direction, and will go back the way it came."
+  {\# {:next \F
+       :move right}
+   \. {:next \W
+       :move left}
+   nil {:next \W
+        :move left}
+   \F {:next \.
+       :move reverse}
+   \W {:next \#
+       :move identity}})
+
+(def solution-2 (partial solution infect-2))
+
 
 (comment
   (let [state state #_{:carte      (->model example)
