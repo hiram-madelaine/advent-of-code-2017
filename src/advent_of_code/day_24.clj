@@ -30,28 +30,47 @@
                    [s' e']
                    [e' s']))))
 
-(defn bridge-length
+(defn bridge-strength
   [bridge]
   (reduce + (flatten bridge)))
 
+(defn choose-strongest
+  [bridges]
+  (last (sort-by bridge-strength bridges)))
+
 (defn solution
   "Find the longuest bridge."
-  [bridge inventory]
+  [choice-fn bridge inventory]
   (let [comps (compatible? inventory bridge)]
     (if (seq comps)
-      (last (sort-by bridge-length
-                     (map
-                       #(solution (grow bridge %)
-                                  (disj inventory %))
-                       comps)))
+      (choice-fn
+        (map
+          #(solution choice-fn
+                     (grow bridge %)
+                     (disj inventory %))
+          comps))
       bridge)))
 
 (defn solution-1
   [input]
   (->> input
        ->inventory
-       (solution [[0 0]])
-       bridge-length))
+       (solution choose-strongest [[0 0]])
+       bridge-strength))
+
+
+(defn choose-longuest-then-strongest
+  [bridges]
+  (let [grouped (group-by count bridges)
+        mx (apply max (keys grouped))]
+    (choose-strongest (get grouped mx))))
+
+(defn solution-2
+  [input]
+  (->> input
+       ->inventory
+       (solution choose-longuest-then-strongest [[0 0]])
+       bridge-strength))
 
 (def input-day-24 "48/5\n25/10\n35/49\n34/41\n35/35\n47/35\n34/46\n47/23\n28/8\n27/21\n40/11\n22/50\n48/42\n38/17\n50/33\n13/13\n22/33\n17/29\n50/0\n20/47\n28/0\n42/4\n46/22\n19/35\n17/22\n33/37\n47/7\n35/20\n8/36\n24/34\n6/7\n7/43\n45/37\n21/31\n37/26\n16/5\n11/14\n7/23\n2/23\n3/25\n20/20\n18/20\n19/34\n25/46\n41/24\n0/33\n3/7\n49/38\n47/22\n44/15\n24/21\n10/35\n6/21\n14/50")
 
