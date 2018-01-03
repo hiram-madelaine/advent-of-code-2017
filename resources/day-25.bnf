@@ -1,0 +1,17 @@
+STATES ::=  STATE*
+STATE ::= RULE-HEAD CR RULE-CASE RULE-CASE CR?
+RULE-CASE ::= RULE-VALUE CR RULE-WRITE CR RULE-MOVE CR RULE-NEXT CR?
+<RULE-HEAD> ::= <"In state "> STATE-ID COLON
+<RULE-VALUE> ::= <"  If the current value is "> condition COLON
+<RULE-WRITE> ::= <"    - Write the value "> write COMMA
+<RULE-MOVE> ::= <"    - Move one slot to the "> move COMMA
+<RULE-NEXT> ::= <"    - Continue with state "> next COMMA
+
+<STATE-ID> ::= #"[A-F]"
+<condition> ::= ("0"|"1")
+write ::= ("0"|"1")
+move ::= "left"|"right"
+next ::= #"[A-F]"
+<COLON> ::= <":">
+<COMMA> ::= <".">
+<CR> ::= <"\n">
