@@ -22,14 +22,10 @@
          [(keyword (str turn))
           (Integer/parseInt (str/join distance))]) (str/split input #",\s")))
 
-(comment
-  (->model input)
-  )
-
 (def init
   {:heading  [-1 0]
    :position [0 0]
-   :visited []})
+   :visited  []})
 
 (def rotations {:L left
                 :R right})
@@ -41,24 +37,19 @@
 
 (defn walk
   [state]
-  (update state :position #(add % (:heading state))))
+  (let [state' (update state :position #(add % (:heading state)))]
+    (update state' :visited #(conj % (:position state')))))
 
 (defn move
   [state [rotation distance]]
-  (let [state' (turn state rotation)
-        steps (take (inc distance) (iterate walk state'))]
-    (last steps)))
+  (let [state' (turn state rotation)]
+    (last (take (inc distance) (iterate walk state')))))
 
 (defn solution-1
   [state input]
   (let [final (reduce move init (->model input))]
     (apply manhattan-distance (map :position [state final]))))
 
-
-(defn steps
-  [state [rotation distance]]
-  (let [state' (turn state rotation)]
-    (take (inc distance) (iterate walk state'))))
 
 (defn solution-2
   [state input]
@@ -70,32 +61,15 @@
                          (reduced))
                      (update acc :visited conj pos)))
                  {:visited #{}}
-                 (map :position (reductions move state (->model input))))]
+                 (:visited (reduce move state (->model input))))]
+    result
     (manhattan-distance (:found result)
                         (:position state))))
-
-
-
-#_(reduce (fn [{:as acc :keys [state visited]} cmd]
-          (let [positions (steps state cmd)]
-            (-> acc
-                (update-in [:state ]))))
-        {:state   init
-         :visited []}
-        (->model input))
 
 
 (comment
   (solution-1 init input)
   (solution-2 init input)
 
-  (fn [acc cmd] (steps init [:L 3]))
 
-  (filter (fn [[p f]]
-            (= 2 f)) (frequencies (map :position (reductions move init (->model input)))))
-
-
-
-  (reduce steps init (->model "R8, R4, R4, R8"))
-
-  (manhattan-distance [128 141] [0 0]))
+  )
