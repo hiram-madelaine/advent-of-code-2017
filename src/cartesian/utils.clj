@@ -8,8 +8,10 @@
 
 
 (defn add
-  [[x y] [dx dy]]
-  [(+ x dx) (+ y dy)])
+  [from delta]
+  (let [[x y] from
+        [dx dy] delta]
+    [(+ x dx) (+ y dy)]))
 
 (s/fdef add
         :args (s/cat :point :cartesian/coords :delta :cartesian/coords)
@@ -36,6 +38,17 @@
     (+
       (Math/abs (- x' x))
       (Math/abs (- y' y)))))
+
+
+(def moves->coords
+  {:up    [-1 0]
+   :down  [1 0]
+   :right [0 1]
+   :left  [0 -1]})
+
+(def coords->moves (clojure.set/map-invert moves->coords))
+
+(def headings (set (keys moves->coords)))
 
 
 (comment

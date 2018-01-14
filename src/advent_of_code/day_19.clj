@@ -13,7 +13,10 @@
    In addition, someone has left letters on the line;
    - these also don't change its direction,
    - but it can use them to keep track of where it's been"
-  (:require [clojure.string :as string]))
+  (:require
+    [clojure.string :as string]
+    [cartesian.utils :as cart :refer [add moves->coords coords->moves headings]]
+            ))
 
 (defn ->model
   [input]
@@ -30,28 +33,11 @@
      :sign     sign
      :heading  :down}))
 
-
-(defn add
-  [from direction]
-  (let [[x y] from
-        [dx dy] direction]
-    [(+ x dx) (+ y dy)]))
-
 (defn diff
   [from to]
   (let [[x y] from
         [x' y'] to]
     [(- x' x) (- y' y)]))
-
-(def moves->coords
-  {:up    [-1 0]
-   :down  [1 0]
-   :right [0 1]
-   :left  [0 -1]})
-
-(def coords->moves (clojure.set/map-invert moves->coords))
-
-(def headings (set (keys moves->coords)))
 
 (def opposites (into {} (for [[heading coord] moves->coords]
                           [heading (coords->moves (map - coord))])))
