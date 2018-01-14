@@ -20,16 +20,27 @@
   [[x y]]
   [y (- x)])
 
-(defn left
-  [[x y]]
-  [(- y) x])
-
 (defn opposite
   [[x y]]
   [(- x) (- y)])
 
+(defn left
+  [coord]
+  (opposite (right coord)))
+
+
+(defn manhattan-distance
+  [from to]
+  (let [[x y] from
+        [x' y'] to]
+    (+
+      (Math/abs (- x' x))
+      (Math/abs (- y' y)))))
+
 
 (comment
+
+  (manhattan-distance [-1 0] [2 0])
   (s/exercise-fn `add)
 
   (let [init [0 0]
@@ -39,6 +50,10 @@
   (let [init [0 0]
         left-left (comp left left)]
     (= (opposite init) (left-left init)))
+
+  (let [init [0 0]
+        right-right (comp right right)]
+    (= (opposite init) (right-right init)))
 
 
   )
