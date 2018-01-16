@@ -41,6 +41,17 @@
 
 
 (def moves->coords
+"
+            y
+  ┌─────────────────▶
+  │
+  │         ▲ up
+x │         │
+  │ left ◀──┼──▶ righ
+  │         │
+  │         ▼
+  ▼        down
+"
   {:up    [-1 0]
    :down  [1 0]
    :right [0 1]
