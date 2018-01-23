@@ -86,21 +86,9 @@
     (str/join (map #(decypher shift %) letters))))
 
 
-(let [room "qzmt-zixmtkozy-ivhz-343[ghjgh]"]
-  (drop 1 (re-find #"([a-z\-]+)-(\d+)\[[a-z]+\]" room)))
-
 (defn solution-2
   [input]
   (->> (str/split-lines input)
       (filter valid-room?)
       (filter (fn [room]
                 (string/includes? (decypher-room room) "north")))))
-
-(comment
-  (valid-room? "totally-real-room-200[decoy]")
-
-
-  "qzmt-zixmtkozy-ivhz-343"
-
-
-  )

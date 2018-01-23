@@ -41,7 +41,7 @@
 
 
 (def moves->coords
-"
+ "
             y
   ┌─────────────────▶
   │
@@ -77,7 +77,6 @@ x │         │
 
   (let [init [0 0]
         right-right (comp right right)]
-    (= (opposite init) (right-right init)))
+    (= (opposite init) (right-right init))))
 
 
-  )

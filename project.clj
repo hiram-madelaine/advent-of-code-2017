@@ -8,4 +8,5 @@
                  [org.clojure/test.check "0.10.0-alpha2"]
                  [com.gfredericks/test.chuck "0.2.8"]
                  [instaparse "1.4.8"]
-                 [com.rpl/specter "1.1.0"]])
+                 [com.rpl/specter "1.1.0"]
+                 [pandect "0.6.1"]])

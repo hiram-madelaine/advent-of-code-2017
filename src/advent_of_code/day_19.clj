@@ -15,8 +15,8 @@
    - but it can use them to keep track of where it's been"
   (:require
     [clojure.string :as string]
-    [cartesian.utils :as cart :refer [add moves->coords coords->moves headings]]
-            ))
+    [cartesian.utils :as cart :refer [add moves->coords coords->moves headings]]))
+
 
 (defn ->model
   [input]
@@ -98,6 +98,6 @@
         state (init-state maze)]
     state)
   (count (base-solution example))
-  (count (base-solution input-day-19))
+  (count (base-solution input-day-19)))
 
-  )
+
